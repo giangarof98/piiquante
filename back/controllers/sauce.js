@@ -45,6 +45,27 @@ exports.getOneSauce = (req,res,next) => {
 exports.updateSauce = (req,res,next) => {
     let sauce = new Sauce({_id: req.params._id});
     if(req.file){
+        Sauce.findOne({ _id: req.params.id})
+        .then((sauce) => {
+            const filename = sauce.imageUrl.split('/images/')[1];
+            fs.unlink('images/' + filename, () => {
+                // Sauce.updateOne({_id: req.params.id}).then(
+                //     () => {
+                //         res.status(200).json({
+                //             message: 'Deleted'
+                //         })
+                //     }
+                // ).catch(
+                //     (error) => {
+                //         res.status(400).json({
+                //             error: error
+                //         })
+                //     }
+                // )
+                console.log('deleted')
+            });
+        })
+
         const url = req.protocol + '://' + req.get('host');
         req.body.sauce = JSON.parse(req.body.sauce)
         sauce = {
@@ -70,25 +91,25 @@ exports.updateSauce = (req,res,next) => {
         }
     }
 
-    Sauce.findOne({ _id: req.params.id})
-        .then((sauce) => {
-            const filename = sauce.imageUrl.split('/images/')[1];
-            fs.unlink('images/' + filename, () => {
-                Sauce.updateOne({_id: req.params.id}).then(
-                    () => {
-                        res.status(200).json({
-                            message: 'Deleted'
-                        })
-                    }
-                ).catch(
-                    (error) => {
-                        res.status(400).json({
-                            error: error
-                        })
-                    }
-                )
-            });
-        })
+    // Sauce.findOne({ _id: req.params.id})
+    //     .then((sauce) => {
+    //         const filename = sauce.imageUrl.split('/images/')[1];
+    //         fs.unlink('images/' + filename, () => {
+    //             Sauce.updateOne({_id: req.params.id}).then(
+    //                 () => {
+    //                     res.status(200).json({
+    //                         message: 'Deleted'
+    //                     })
+    //                 }
+    //             ).catch(
+    //                 (error) => {
+    //                     res.status(400).json({
+    //                         error: error
+    //                     })
+    //                 }
+    //             )
+    //         });
+    //     })
 
     Sauce.updateOne({_id: req.params.id}, sauce).then(() => {
             res.status(201).json({
